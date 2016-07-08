@@ -1,0 +1,156 @@
+<! DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" >
+		<title>Require</title>
+		<link rel="stylesheet" type="text/css" href="style/css/bootstrap.min.css">
+		<link rel="stylesheet" href="style/css/font-awesome.min.css">
+		<link rel="stylesheet" href="style/css/map.css">
+		<link rel="shortcut icon" href="map.ico">
+	</head>
+	<body>
+		<div id="wrap">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-4 map-left" id="self-list">
+						<table class="table table-bordered table-hover">
+							<thead>
+								<tr>
+									<th class="w-r-55">#ID</th>
+		                            <th class="w-p-50"><i class="fa fa-map-marker"></i> 地理位置</th>
+		                            <th class="w-r-55">状态</th>
+		                            <th class="w-r-70"><i class="fa fa-cog"></i> 操作</th>
+								</tr>
+							</thead>
+							<tbody class="data-container">
+								
+							</tbody>
+						</table>
+						<div class="row">
+							<div class="col-md-6">
+				             	当前第 <span id="current">1</span> 页,共 <span id="totalpage">0</span> 页
+				            </div>
+				            <div class="col-md-6">
+				             	<ul class="pagination">
+		                          	<li class="" id="mapprev"><a href="javascript:;">上一页</a></li>
+		                          	<li class="" id="mapnext"><a href="javascript:;">下一页</a></li>
+		                        </ul>
+				            </div>
+						</div>
+					</div>
+					<div class="col-md-4" id="single-detail">
+						<div class="row">
+		                    <div class="col-md-12 ">
+		                        <button class="btn btn-default" id="savedata"><i class="fa fa-save"></i> 保存</button>
+		                        <button class="btn btn-primary" id="returnlist"><i class="fa fa-reply"></i> 返回</button>
+		                    </div>
+		                </div>
+		                <form class="col-md-12 form-horizontal">
+		                    <input type="hidden" name="url">
+		                    <div class="form-group">
+		                        <label class="col-md-3 control-label"># ID：</label>
+		                        <div class="col-md-9">
+		                            <input type="text" name="id" id="landid"  class="form-control" placeholder="暂无记录ID" readonly>
+		                        </div>
+		                    </div>
+		                    <div class="form-group">
+		                        <label class="col-md-3 control-label">土地编号：</label>
+		                        <div class="col-md-9">
+		                            <input type="text" name="plotNo" id="landnum" class="form-control" placeholder="暂无记录土地编号" readonly>
+		                        </div>
+		                    </div>
+		                    <div class="form-group">
+		                        <label class="col-md-3 control-label">地理位置：</label>
+		                        <div class="col-md-9">
+		                            <input type="text" name="title" id="landtitle" class="form-control" placeholder="暂无地理位置" readonly>
+		                        </div>
+		                    </div>
+		                    <div class="form-group">
+		                        <label class="col-md-3 control-label">中心坐标：</label>
+		                        <div class="col-md-9">
+		                            <input type="text" name="point" id="landpoint" class="form-control" placeholder="暂无中心坐标点" readonly>
+		                        </div>
+		                    </div>
+		                    <div class="form-group">
+		                        <label class="col-md-3 control-label">坐标集合：</label>
+		                        <div class="col-md-9">
+		                            <textarea name="points" class="form-control" id="landpoints" rows="8" placeholder="暂无坐标集" readonly></textarea>
+		                        </div>
+		                    </div>
+		                </form>
+					</div>
+					<div class="col-md-8 map-right">
+						<div class="map-handle row">
+							<div class="col-md-12">
+		                    	<button class="btn btn-danger" id="filebtn"><i class="fa fa-folder-open-o" ></i>选择图片
+		                        	<input type="file" class="btn btn-danger imgflie" value="上传图片" id="fileimg">
+		                        </button>
+	                        	<div class="btn-group" data-toggle="buttons" id="map-handle">
+	                            	<label class="btn btn-default" id="fixedmap">
+	                                		<input type="radio" name="options"> <i class="fa fa-hand-o-up"></i> 固定地图
+	                            	</label>
+	                            	<label class="btn btn-default" id="liftmap">
+	                               		<input type="radio" name="options"> <i class="fa fa-hand-o-up"></i> 解除固定
+	                            	</label>
+	                           		<label class="btn btn-default" id="">
+	                                	<input type="radio" name="options" id="paint-point"> <i class="fa fa-map-marker"></i> 添加标记
+	                            	</label>
+	                        	</div>
+	                        	<button class="btn btn-danger" id="delete-point"><i class="fa fa-times"></i> 清除中心点</button>
+	                        	<button class="btn btn-danger" id="delete-points"><i class="fa fa-times"></i> 清除坐标集</button>
+		                    </div>
+						</div>
+						<div id="map-container">
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--模板开始 -->
+		<script type="text/x-jquery-tmpl" id="datalist">
+			<tr id="${id}">
+				<td class="">${id}</td>
+				<td class="self-nowrap">${title}</td>
+				<td class="">
+				{{if point != null && point != ''}}
+					<i class="fa fa-star"></i>
+				{{else}}
+					<i class="fa fa-star-o"></i>
+				{{/if}}
+				{{if points != null && points != ''}}
+					<i class="fa fa-star"></i>
+				{{else}}
+					<i class="fa fa-star-o"></i>
+				{{/if}}
+				</td>
+		        <td class="">
+		            <div class="btn-group" data-id="${id}" data-title="${title}" data-url="${url}" data-point="${point}" data-points="${points}">
+		                <button class="btn btn-default btn-sm maplook" ><i class="fa fa-eye" ></i></button>
+		                <button class="btn btn-primary btn-sm mapedit"><i class="fa fa-edit"></i></button>
+		            </div>
+		        </td>
+			</tr>
+		</script>
+		<!--模板结束 -->
+		<script src="http://localhost:35737/livereload.js?snipver=1" type="text/javascript"></script>
+		<script src="script/lib/jquery-1.11.0.min.js"></script>
+		<script src="http://api.map.baidu.com/api?v=2.0&ak=B36MAxRdlGXlb9SFmp6BYCGt"></script>
+		<script src="script/view.class.js"></script>
+		<script src="script/control.class.js"></script>
+		<script src="script/model.class.js"></script>
+		<script src="script/main.class.js"></script>
+		<script src="script/lib/jquery.tmpl.min.js"></script>
+		<script type="text/javascript">
+			$( function(){
+				if( window.localStorage ){
+					console.log( 'Your Browser is truely support the HTML5 localStorage API' );
+				}else{
+					console.log( "I'm sorry to tell you, your browser must be update" );
+				}
+			} )
+		</script>
+	</body>
+</html>
